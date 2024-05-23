@@ -1,6 +1,7 @@
 import requests
+from bs4 import BeautifulSoup
 
-# Dictionary with forest names and wilderness names in lower case.
+# Define the dictionary with forest names converted to lower case
 NM_national_forests = {
     5430: ["santa fe", "pecos wilderness", "pecos", "chama river canyon", "chama river canyon wilderness", "san pedro parks wilderness", "san pedro parks"],
     5432: ["carson", "pecos wilderness", "columbine-hondo wilderness", "columbine-hondo", "wheeler peak wilderness", "wheeler peak", "latir peak wilderness", "latir peak", "pecos"],
@@ -38,17 +39,20 @@ NM_national_forests = {
     5479: ["gila"],
 }
 
-# Prompt the user for a national forest name
-forest_name = input("Enter the national forest name: ").lower()  # Convert user input to lower case
+# Prompt the user for a forest name
+forest_name = input("Enter the forest name: ").lower()  # Convert user input to lower case
 
-# Find the corresponding numerical value for the request
+# Find the corresponding numerical values
 forest_ids = [key for key, values in NM_national_forests.items() if forest_name in [name.lower() for name in values]]  # Convert forest names to lower case for comparison
 
-# Check if numerical values were found
+# Check if any numerical values were found
 if not forest_ids:
     print(f"No query found for forest name: {forest_name}. Visit https://nifc.maps.arcgis.com/apps/dashboards/aa9ff369dd414b74b69b696b40a1d057 and click on your destination to determine if any fire warnings exist.")
 else:
-    # Base URL
+    # Base URL for fire weather information
+    fire_weather_url = "https://forecast.weather.gov/wwamap/wwatxtget.php?cwa=ABQ&wwa=fire%20weather%20watch"
+
+    # Base URL for fire restrictions information
     base_url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/NPSBoundariesSWNonEditablePUBLICv2/FeatureServer/0/query"
 
     # Parameters for the GET request
@@ -75,15 +79,32 @@ else:
             split_keyword = b"GlobalID\x10\x0b\x1a\x08GlobalID"
             if split_keyword in data:
                 result = data.split(split_keyword, 1)[1]
-                if b"Stage" in result or b"fire" in result or b"ban" in result or b"prohibition" in result:
-                    print("There ARE fire restrictions for your destination. See details below or visit: https://nifc.maps.arcgis.com/apps/dashboards/aa9ff369dd414b74b69b696b40a1d057.")
+                if b"Stage" in result or b"fire" in result:
+                    print("There ARE fire restrictions for your destination.")
                     print(f"Response for forest ID {forest_id}: {result[:100]}...")  # Print first 100 bytes of the extracted content for brevity
                     fire_info_found = True
             else:
-                print(f"Fire, stage, ban or prohibition not found in the response for forest ID {forest_id}")
+                print(f"Keyword not found in the response for forest ID {forest_id}")
         else:
             print(f"Failed to get data for forest ID {forest_id}, status code: {response.status_code}")
 
     # If no fire-related info found in any response
     if not fire_info_found:
         print("It appears there are no fire restrictions for the forest you've indicated. To confirm, feel free to visit https://nifc.maps.arcgis.com/apps/dashboards/aa9ff369dd414b74b69b696b40a1d057.")
+
+# Prompt the user to hit Enter before fetching fire weather information
+    input("Hit Enter to acknowledge the fire restriction info and view fire weather alerts for the Albuquerque area.")
+
+
+    # Fetch fire weather information
+    fire_weather_response = requests.get(fire_weather_url)
+    if fire_weather_response.status_code == 200:
+        # Parse HTML content
+        soup = BeautifulSoup(fire_weather_response.content, 'html.parser')
+        # Find all <pre> tags and print their content
+        pre_tags = soup.find_all('pre')
+        for pre_tag in pre_tags:
+            print(pre_tag.text.strip())
+            print()  # Print a line break after each set of <pre> tag content
+    else:
+        print(f"Failed to fetch fire weather information, status code: {fire_weather_response.status_code}.")
