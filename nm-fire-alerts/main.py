@@ -40,7 +40,7 @@ NM_national_forests = {
 }
 
 # Prompt the user for a forest name
-forest_name = input("Enter the forest name: ").lower()  # Convert user input to lower case
+forest_name = input("Enter the national forest name: ").lower()  # Convert user input to lower case
 
 # Find the corresponding numerical values
 forest_ids = [key for key, values in NM_national_forests.items() if forest_name in [name.lower() for name in values]]  # Convert forest names to lower case for comparison
