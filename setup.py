@@ -17,5 +17,5 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.10",
-    entry_points={"console_scripts": ["nm-fire-alerts=nm-fire-alerts.main:get_forest_ids"]},
+    entry_points={"console_scripts": ["nm-fire-alerts=nm-fire-alerts.main:main"]},
 )
