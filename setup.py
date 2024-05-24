@@ -4,7 +4,7 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="NM-fire-alerts",
+    name="NM_fire_alerts",
     version="0.1.0",
     author="Katie Ritchie",
     author_email="ritchieke@gmail.com",
@@ -17,5 +17,5 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.10",
-    entry_points={"console_scripts": ["nm-fire-alerts=nm-fire-alerts.main:main"]},
+    entry_points={"console_scripts": ["nm_fire_alerts=nm_fire_alerts.main:main"]},
 )
