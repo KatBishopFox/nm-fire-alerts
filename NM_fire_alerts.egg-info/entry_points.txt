@@ -1,0 +1,2 @@
+[console_scripts]
+nm_fire_alerts = nm_fire_alerts.main:main
