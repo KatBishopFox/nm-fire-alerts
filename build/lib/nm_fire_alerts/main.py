@@ -55,8 +55,6 @@ base_url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/N
 # Base URL for fire weather information
 fire_weather_url = "https://forecast.weather.gov/wwamap/wwatxtget.php?cwa=ABQ&wwa=fire%20weather%20watch"
 
-# fire_weather_api = ""
-
 def get_forest_ids(forest_name):
     forest_name = forest_name.lower()
     forest_ids = [key for key, values in NM_national_forests.items() if forest_name in [name.lower() for name in values]]
@@ -94,10 +92,6 @@ def get_fire_weather_info():
         else:
             print("There are no fire weather advisories at https://forecast.weather.gov/wwamap/wwatxtget.php?cwa=ABQ&wwa=fire%20weather%20watch. Visit https://www.weather.gov/abq/ for relevant weather information.")
 
-
-# def get_fire_weather_info2():
-#    fire_weather_response = requests.get
-
 def main():
     forest_name = input("Enter the forest name: ")
     forest_ids = get_forest_ids(forest_name)
@@ -109,7 +103,7 @@ def main():
             print("It appears there are no fire restrictions for the forest you've indicated. To confirm, feel free to visit https://nifc.maps.arcgis.com/apps/dashboards/aa9ff369dd414b74b69b696b40a1d057.")
         input("Hit Enter to acknowledge the fire restriction information and inquire about fire weather alerts for the Albuquerque area.")
         get_fire_weather_info()
+        input("Hit Enter to acknowledge the fire weather information and close the script.")
 
 if __name__ == "__main__":
     main()
-
