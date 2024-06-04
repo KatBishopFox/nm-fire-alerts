@@ -55,6 +55,8 @@ base_url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/N
 # Base URL for fire weather information
 fire_weather_url = "https://forecast.weather.gov/wwamap/wwatxtget.php?cwa=ABQ&wwa=fire%20weather%20watch"
 
+# fire_weather_api = ""
+
 def get_forest_ids(forest_name):
     forest_name = forest_name.lower()
     forest_ids = [key for key, values in NM_national_forests.items() if forest_name in [name.lower() for name in values]]
@@ -83,11 +85,18 @@ def check_fire_restrictions(forest_ids):
 def get_fire_weather_info():
     fire_weather_response = requests.get(fire_weather_url)
     if fire_weather_response.status_code == 200:
-               soup = BeautifulSoup(fire_weather_response.content, 'html.parser')
-    pre_tags = soup.find_all('pre')
-    for pre_tag in pre_tags:
-        print(pre_tag.text.strip())
-        print()
+        soup = BeautifulSoup(fire_weather_response.content, 'html.parser')
+        pre_tags = soup.find_all('pre')
+        if pre_tags:
+            for pre_tag in pre_tags:
+                print(pre_tag.text.strip())
+                print()
+        else:
+            print("There are no fire weather advisories at https://forecast.weather.gov/wwamap/wwatxtget.php?cwa=ABQ&wwa=fire%20weather%20watch. Visit https://www.weather.gov/abq/ for relevant weather information.")
+
+
+# def get_fire_weather_info2():
+#    fire_weather_response = requests.get
 
 def main():
     forest_name = input("Enter the forest name: ")
